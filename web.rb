@@ -6,10 +6,11 @@ get '/' do
 end
 
 post '/bcrypt' do
-  if pass = params[:password]
-    erb "Crypted password:</br>" + BCrypt::Password.create(pass)
+  if params[:p] and params[:p2] and (params[:p] == params[:p2])
+    erb "BCrypted password:</br><pre>" + BCrypt::Password.create(params[:p]) + "</pre>"
   else
-    erb "Gotta have a password!"
+    @error = "Problem! try again"
+    erb :index
   end
 end
 
@@ -35,14 +36,11 @@ end
 
 template :index do
   <<-ERB
+    <% if @error %><div class="error"><%= @error %></div><% end %>
     <form action="bcrypt" method="POST">
-      <div>
-        <label>
-          Password to bcrypt
-          <input type="password" name="password">
-          <input type="submit" name="bcrypt it!">
-        </label>
+      <div><label>Password to bcrypt<input type="password" name="p"></label></div>
+      <div><label>Again <input type="password" name="p2"></label></div>
+      <div><input type="submit" value="bcrypt it!"></div>
     </form>
   ERB
 end
-
